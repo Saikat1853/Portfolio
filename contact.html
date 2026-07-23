@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saikat Sarkar | Contact</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 1. Include EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Saikat Sarkar<span>.</span></a>
+        </div>
+        <div class="nav-right">
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="blog.html">Blogs</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+
+            <div class="hamburger" id="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="contact-page">
+            <h2 style="margin-top: 40px;">Get In Touch</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem;">
+                Have a question or want to work together? Feel free to reach out!
+            </p>
+
+            <form id="contact-form">
+                <div class="form-group">
+                    <input type="text" id="user_name" name="from_name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="user_email" name="reply_to" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea id="user_message" name="message" rows="5" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="btn-submit">Send Message</button>
+                <p id="form-status" style="text-align: center; margin-top: 1rem; font-size: 0.95rem;"></p>
+            </form>
+
+            <!-- Direct Contact & Social Links -->
+            <div class="contact-details" style="text-align: center; margin-top: 3rem;">
+                <p style="margin-bottom: 1rem;">Or connect directly via:</p>
+                <p style="margin-bottom: 1.5rem; font-weight: 600;">
+                    <a href="mailto:saikatsarkar1853@gmail.com" style="color: var(--accent);"><i
+                            class="fa-regular fa-envelope"></i> saikatsarkar1853@gmail.com</a>
+                </p>
+
+                <div class="social-links"
+                    style="font-size: 1.6rem; display: flex; gap: 1.5rem; justify-content: center;">
+                    <a href="https://github.com/Saikat1853" target="_blank" aria-label="GitHub"><i
+                            class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank" aria-label="LinkedIn"><i
+                            class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank" aria-label="Instagram"><i
+                            class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links"
+            style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; gap: 1.2rem; justify-content: center;">
+            <a href="https://github.com/Saikat1853" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="mailto:saikatsarkar1853@gmail.com"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+        <p>Designed & Developed by Saikat Sarkar. &copy; <span id="year"></span> </p>
+    </footer>
+
+    <script src="JS/contact.js"></script>
+    <script src="JS/main.js"></script>
+</body>
+
+</html>

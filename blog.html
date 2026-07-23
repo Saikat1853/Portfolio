@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saikat Sarkar | Blogs</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Saikat Sarkar<span>.</span></a>
+        </div>
+        <div class="nav-right">
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="blog.html" class="active">Blogs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+
+            <div class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="blog-page">
+            <h2 style="margin-top: 40px;">Personal Blogs</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                Thoughts, technical tutorials, and insights on embedded systems and software.
+            </p>
+
+            <!-- Search & Filter Controls -->
+            <div class="blog-controls">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="blog-search" placeholder="Search articles...">
+                </div>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="blog-grid" id="blog-grid">
+                <!-- Blog Post 1 -->
+                <article class="blog-card" data-blog="esp32-pid">
+                    <div class="blog-card-content">
+                        <div class="blog-meta">
+                            <span class="blog-date"><i class="fa-regular fa-calendar"></i> July 20, 2026</span>
+                            <span class="tag">Embedded Systems</span>
+                        </div>
+                        <h3>Understanding PID Control in ESP32 Drones</h3>
+                        <p>A deep dive into implementing Proportional-Integral-Derivative control loops for real-time
+                            quadcopter stabilization.</p>
+                    </div>
+                    <div class="blog-card-footer">
+                        <span class="read-more-btn">Read Article <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </article>
+
+                <!-- Blog Post 2 -->
+                <article class="blog-card" data-blog="web-performance">
+                    <div class="blog-card-content">
+                        <div class="blog-meta">
+                            <span class="blog-date"><i class="fa-regular fa-calendar"></i> June 15, 2026</span>
+                            <span class="tag">Web Development</span>
+                        </div>
+                        <h3>Building Minimalist Websites for Maximum Speed</h3>
+                        <p>Why stripping down frameworks in favor of vanilla HTML, CSS, and JS results in blazing fast
+                            load times.</p>
+                    </div>
+                    <div class="blog-card-footer">
+                        <span class="read-more-btn">Read Article <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Blog Article Modal -->
+        <div id="blog-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" id="close-blog-modal" aria-label="Close modal">&times;</button>
+                <div id="blog-modal-body">
+                    <!-- Dynamic blog article loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="social-links"
+            style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; gap: 1.2rem; justify-content: center;">
+            <a href="https://github.com/Saikat1853" target="_blank" aria-label="GitHub"><i
+                    class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank" aria-label="LinkedIn"><i
+                    class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank" aria-label="Instagram"><i
+                    class="fab fa-instagram"></i></a>
+            <a href="mailto:saikatsarkar1853@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+        <p>Designed & Developed by Saikat Sarkar. &copy; <span id="year"></span> </p>
+    </footer>
+
+    
+    <!-- Add Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin/js/supabase.js"></script>
+
+    <script src="js/main.js"></script>
+    <script src="js/blog.js"></script>
+</body>
+
+</html>

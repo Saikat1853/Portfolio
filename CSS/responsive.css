@@ -1,0 +1,66 @@
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: var(--header-height);
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - var(--header-height));
+        background-color: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
+        padding: 2rem;
+        transition: right 0.3s ease-in-out;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-menu ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+
+
+    /* Shorten hero buttons on mobile & keep text centered */
+   
+
+
+    /* Stabilize mobile hero buttons */
+    .cta-buttons {
+        display: flex;
+        gap: 12px;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+
+    .cta-buttons .btn {
+        width: 75%;
+        /* Shortens width from full width to 75% */
+        max-width: 220px;
+        /* Prevents them from being too wide on larger phones */
+        min-width: 220px;
+        /* Locks button width */
+        justify-content: center;
+        /* Centers text & icon inside the button */
+        text-align: center;
+    }
+
+    /* Contact page form button mobile adjustment */
+    #contact-form button[type="submit"] {
+        /* width: 75%; */
+        max-width: 250px;
+
+    }
+}

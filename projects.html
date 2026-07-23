@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saikat Sarkar | Projects</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Saikat Sarkar<span>.</span></a>
+        </div>
+        <div class="nav-right">
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="projects.html" class="active">Projects</a></li>
+                    <li><a href="blog.html">Blogs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+
+            <div class="hamburger" id="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="projects-page">
+            <h2 style="margin-top: 40px;">Featured Projects</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem;">
+                A showcase of web applications and hardware engineering builds.
+            </p>
+
+            <!-- Container for Multiple Ongoing Projects -->
+            <div id="active-projects-container" style="display: none; margin-bottom: 2.5rem;">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- 2-Column Completed Projects Grid -->
+            <div class="projects-grid">
+                <!-- Loaded dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- Project Detail Modal -->
+        <div id="project-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" id="close-modal" aria-label="Close modal">&times;</button>
+                <div id="modal-body">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="social-links" style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; gap: 1.2rem; justify-content: center;">
+            <a href="https://github.com/Saikat1853" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="mailto:saikatsarkar1853@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+        <p>Designed & Developed by Saikat Sarkar. &copy; <span id="year"></span></p>
+    </footer>
+
+    <!-- Markdown Parser & Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin/js/supabase.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

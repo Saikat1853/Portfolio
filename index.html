@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saikat Sarkar | Home</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Saikat Sarkar</a><span>.</span></a>
+        </div>
+        <div class="nav-right">
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="blog.html">Blogs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+
+            <div class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1>Hi, I'm <span class="highlight">Saikat</span></h1>
+                    <p class="tagline"><span id="typewriter"></span><span class="cursor">|</span></p>
+                    <div class="cta-buttons">
+                        <a href="projects.html" class="btn btn-primary">View Projects <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                        <a href="contact.html" class="btn btn-secondary">Contact Me</a>
+                    </div>
+                </div>
+
+                <!-- Portrait Frame -->
+                <div class="hero-image">
+                    <div class="img-wrapper">
+                        <!-- Replace with path to your portrait photo -->
+                        <img src="assets/images/potrait2.png" alt="Saikat Sarkar Portrait">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about" style="text-align: center;">
+            <h2>About Me</h2>
+            <p style="color: var(--text-secondary); max-width: 700px; margin: 0 auto 1.8rem auto;">
+                I'm an Electronics and Instrumentation Engineering undergraduate at the National Institute of Technology
+                Agartala, passionate about data analytics, embedded systems, and software development. I enjoy
+                transforming data into actionable insights while building innovative technology-driven solutions. </p>
+
+            <!-- View My Resume Button -->
+            <a href="assets/Saikat.pdf" class="btn btn-secondary" target="_blank">
+                <i class="fa-regular fa-file-pdf"></i> View My Resume
+            </a>
+        </section>
+
+
+    </main>
+
+    <footer>
+        <div class="social-links"
+            style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; gap: 1.2rem; justify-content: center;">
+            <a href="https://github.com/Saikat1853" target="_blank" aria-label="GitHub"><i
+                    class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank" aria-label="LinkedIn"><i
+                    class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank" aria-label="Instagram"><i
+                    class="fab fa-instagram"></i></a>
+            <a href="mailto:saikatsarkar1853@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+        <p>Designed & Developed by Saikat Sarkar. &copy; <span id="year"></span> </p>
+    </footer>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

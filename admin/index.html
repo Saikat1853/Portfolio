@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Portfolio</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-primary);
+        }
+
+        .login-card {
+            background-color: var(--bg-secondary);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+        }
+
+        .login-card h2 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+    <!-- Favicon for files inside admin/ folder -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" id="login-btn" class="btn btn-primary"
+                    style="width: 100%; margin-top: 1.5rem; justify-content: center;">Login</button>
+            </form>
+            <p id="login-error" style="color: #ef4444; margin-top: 1rem; text-align: center; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const errorEl = document.getElementById('login-error');
+            const loginBtn = document.getElementById('login-btn');
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Check window.supabaseClient
+                if (!window.supabaseClient) {
+                    errorEl.style.color = '#ef4444';
+                    errorEl.textContent = 'Error: Supabase client is not loaded.';
+                    return;
+                }
+
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Authenticating...';
+                errorEl.style.color = '#0284c7';
+                errorEl.textContent = 'Connecting...';
+
+                try {
+                    // Call auth on supabaseClient
+                    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) {
+                        console.error('Login Failed:', error);
+                        errorEl.style.color = '#ef4444';
+                        errorEl.textContent = error.message;
+                    } else if (data.session) {
+                        errorEl.style.color = '#10b981';
+                        errorEl.textContent = 'Success! Redirecting...';
+                        setTimeout(() => {
+                            window.location.href = './dasboard.html';
+                        }, 1000);
+                    }
+                } catch (err) {
+                    console.error('Unexpected JS error:', err);
+                    errorEl.style.color = '#ef4444';
+                    errorEl.textContent = 'Unexpected error: ' + err.message;
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saikat Sarkar | About</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Saikat Sarkar<span>.</span></a>
+        </div>
+        <div class="nav-right">
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="blog.html">Blogs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+
+            <div class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-page">
+            <h2 style="margin-top: 40px;">About Me</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem;">
+                Background, core technical competencies, and ongoing engineering pursuits.
+            </p>
+
+            <!-- Dynamic Background Cards Grid -->
+            <div id="about-cards-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; margin-bottom: 3rem;">
+                <p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">Loading cards...</p>
+            </div>
+
+            <!-- Technical Proficiency Grid -->
+            <h3 style="text-align: center; font-size: 1.4rem; margin-bottom: 1.5rem;">Technical Proficiency</h3>
+            <div class="skills-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem;">
+                <p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">Loading skills...</p>
+            </div>
+
+            <!-- Resume Download Button -->
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="assets/Saikat.pdf" class="btn btn-secondary" target="_blank">
+                    <i class="fa-regular fa-file-pdf"></i> View Full Resume
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links"
+            style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; gap: 1.2rem; justify-content: center;">
+            <a href="https://github.com/Saikat1853" target="_blank" aria-label="GitHub"><i
+                    class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/saikat-sarkar1853/" target="_blank" aria-label="LinkedIn"><i
+                    class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/saikat_sarkar_24/" target="_blank" aria-label="Instagram"><i
+                    class="fab fa-instagram"></i></a>
+            <a href="mailto:saikatsarkar1853@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+        <p>Designed & Developed by Saikat Sarkar. &copy; <span id="year"></span></p>
+    </footer>
+
+    <script src="js/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin/js/supabase.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.supabaseClient) return;
+
+            // 1. Fetch Dynamic About Cards
+            const { data: cards } = await window.supabaseClient.from('about_cards').select('*').order('created_at', { ascending: true });
+            const cardsGrid = document.getElementById('about-cards-grid');
+
+            if (cardsGrid && cards && cards.length > 0) {
+                cardsGrid.innerHTML = cards.map(c => `
+                    <div class="about-card">
+                        <h3><i class="${c.icon || 'fa-solid fa-briefcase'}" style="color: var(--accent); margin-right: 8px;"></i> ${c.title}</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem; line-height: 1.6;">
+                            ${c.description}
+                        </p>
+                    </div>
+                `).join('');
+            } else if (cardsGrid) {
+                cardsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">No cards added yet.</p>';
+            }
+
+            // 2. Fetch Dynamic Technical Skills
+            const { data: skills } = await window.supabaseClient.from('skills').select('*').order('created_at', { ascending: true });
+            const skillsGrid = document.querySelector('.skills-grid');
+
+            if (skillsGrid && skills && skills.length > 0) {
+                skillsGrid.innerHTML = skills.map(s => `
+                    <div class="skill-card">
+                        <span>${s.name}</span> 
+                        <strong>${s.level}</strong>
+                    </div>
+                `).join('');
+            } else if (skillsGrid) {
+                skillsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">No skills added yet.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>
