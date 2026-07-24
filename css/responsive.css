@@ -64,3 +64,24 @@
 
     }
 }
+
+/* Certificates Responsive Grid Adjustments */
+@media (max-width: 1024px) {
+    .certificates-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .certificates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cert-actions {
+        flex-direction: column;
+    }
+
+    .cert-actions .btn {
+        width: 100%;
+    }
+}

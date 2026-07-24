@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let mediaList = [];
     let editingProjectId = null;
     let editingBlogId = null;
+    let editingCertId = null;
     let pendingDeleteAction = null;
 
     // 0. DATE FORMAT HELPER
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. STORAGE CALCULATION
+    // 4. STORAGE & STATS CALCULATION
     async function calculateStorage() {
         if (!window.supabaseClient) return;
         const { data } = await window.supabaseClient.storage.from('portfolio-media').list('', { limit: 1000 });
@@ -86,6 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const storageEl = document.getElementById('stat-storage-count');
             if (storageEl) storageEl.textContent = `${totalMB} MB / 1 GB`;
         }
+
+        const { data: certs } = await window.supabaseClient.from('certificates').select('id');
+        const certsEl = document.getElementById('stat-certs-count');
+        if (certsEl) certsEl.textContent = certs ? certs.length : 0;
     }
 
     // 5. MEDIA DROPDOWN & INSERTION
@@ -101,13 +106,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const projSelect = document.getElementById('proj-media-select');
         const blogSelect = document.getElementById('blog-media-select');
+        const certSelect = document.getElementById('cert-media-select');
 
         const options = `<option value="">-- Select Image from Media Library --</option>` +
             mediaList.map(m => `<option value="${m.url}">${m.name}</option>`).join('');
 
         if (projSelect) projSelect.innerHTML = options;
         if (blogSelect) blogSelect.innerHTML = options;
+        if (certSelect) certSelect.innerHTML = `<option value="">-- Choose from Media --</option>` + mediaList.map(m => `<option value="${m.url}">${m.name}</option>`).join('');
     }
+
+    document.getElementById('cert-media-select')?.addEventListener('change', (e) => {
+        if (e.target.value) {
+            document.getElementById('cert-thumbnail').value = e.target.value;
+        }
+    });
 
     function insertAtCursor(textarea, text) {
         if (!textarea) return;
@@ -142,212 +155,134 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (closePreviewBtn) closePreviewBtn.addEventListener('click', () => previewModal?.classList.remove('show'));
 
-    document.getElementById('preview-proj-btn')?.addEventListener('click', () => {
-        const title = document.getElementById('proj-title').value || 'Project Preview';
-        const rawContent = document.getElementById('proj-content').value || document.getElementById('proj-desc').value;
-        const parsedHTML = typeof marked !== 'undefined' ? marked.parse(rawContent) : rawContent;
+    // 7. CERTIFICATES CRUD
+    const certModal = document.getElementById('cert-modal');
+    const openCertBtn = document.getElementById('open-cert-modal-btn');
+    const closeCertBtn = document.getElementById('close-cert-modal');
+    const certForm = document.getElementById('cert-form');
 
-        if (previewBody) {
-            previewBody.innerHTML = `
-                <article class="modal-article">
-                    <h2>${title}</h2>
-                    <div class="article-content" style="line-height: 1.7; margin-top: 1rem;">${parsedHTML}</div>
-                </article>
-            `;
-        }
-        previewModal?.classList.add('show');
-    });
-
-    document.getElementById('preview-blog-btn')?.addEventListener('click', () => {
-        const title = document.getElementById('blog-title').value || 'Blog Preview';
-        const category = document.getElementById('blog-category').value || 'General';
-        const rawContent = document.getElementById('blog-content').value;
-        const parsedHTML = typeof marked !== 'undefined' ? marked.parse(rawContent) : rawContent;
-
-        if (previewBody) {
-            previewBody.innerHTML = `
-                <article class="modal-article">
-                    <h2>${title}</h2>
-                    <span class="tag" style="margin-bottom: 1rem; display: inline-block;">${category}</span>
-                    <div class="article-content" style="line-height: 1.7; margin-top: 1rem;">${parsedHTML}</div>
-                </article>
-            `;
-        }
-        previewModal?.classList.add('show');
-    });
-
-    // 7. PROJECT MODAL, EDIT & FORM SUBMIT
-    const projectModal = document.getElementById('project-modal');
-    const openProjBtn = document.getElementById('open-project-modal-btn');
-    const closeProjBtn = document.getElementById('close-project-modal');
-    const projectForm = document.getElementById('project-form');
-
-    if (openProjBtn) {
-        openProjBtn.addEventListener('click', () => {
-            editingProjectId = null;
-            if (projectForm) projectForm.reset();
-            const modalTitle = projectModal.querySelector('h3');
-            if (modalTitle) modalTitle.textContent = 'Add New Project';
-            document.getElementById('progress-input-group').style.display = 'none';
+    if (openCertBtn) {
+        openCertBtn.addEventListener('click', () => {
+            editingCertId = null;
+            if (certForm) certForm.reset();
+            document.getElementById('cert-modal-title').textContent = 'Add Certificate';
             populateMediaDropdowns();
-            projectModal?.classList.add('show');
+            certModal?.classList.add('show');
         });
     }
-    if (closeProjBtn) closeProjBtn.addEventListener('click', () => projectModal?.classList.remove('show'));
 
-    document.getElementById('proj-is-active')?.addEventListener('change', (e) => {
-        const progressGroup = document.getElementById('progress-input-group');
-        if (progressGroup) progressGroup.style.display = e.target.checked ? 'flex' : 'none';
-    });
+    if (closeCertBtn) closeCertBtn.addEventListener('click', () => certModal?.classList.remove('show'));
 
-    if (projectForm) {
-        projectForm.addEventListener('submit', async (e) => {
+    async function fetchCertificatesAdmin() {
+        if (!window.supabaseClient) return;
+        const { data: certs, error } = await window.supabaseClient.from('certificates').select('*').order('display_order', { ascending: true });
+        const container = document.getElementById('certs-admin-list');
+        if (!container) return;
+
+        if (error || !certs || certs.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1;">No certificates added yet.</p>';
+            return;
+        }
+
+        container.innerHTML = certs.map(c => `
+            <div style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <h4 style="font-size: 1rem;">${c.title}</h4>
+                        ${c.is_featured ? '<span class="tag" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem;">Featured</span>' : ''}
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--accent); font-weight: 500; margin-bottom: 4px;">${c.issuing_organization} &bull; ${c.issue_date}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">Order: ${c.display_order || 1}</p>
+                </div>
+                <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 10px;">
+                    <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="openEditCert('${c.id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="deleteCert('${c.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    if (certForm) {
+        certForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const title = document.getElementById('proj-title').value.trim();
-            const tags = document.getElementById('proj-tags').value.split(',').map(t => t.trim());
-            const description = document.getElementById('proj-desc').value.trim();
-            const content = document.getElementById('proj-content').value.trim();
-            const repoUrl = document.getElementById('proj-repo').value.trim();
-            const isActive = document.getElementById('proj-is-active')?.checked || false;
-            const progressVal = parseInt(document.getElementById('proj-progress')?.value) || 100;
+            const title = document.getElementById('cert-title').value.trim();
+            const issuing_organization = document.getElementById('cert-org').value.trim();
+            const issue_date = document.getElementById('cert-date').value.trim();
+            const thumbnail_url = document.getElementById('cert-thumbnail').value.trim();
+            const description = document.getElementById('cert-desc').value.trim();
+            const skills = document.getElementById('cert-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+            const certificate_url = document.getElementById('cert-url').value.trim();
+            const linkedin_url = document.getElementById('cert-linkedin').value.trim();
+            const display_order = parseInt(document.getElementById('cert-order').value) || 1;
+            const is_featured = document.getElementById('cert-featured').checked;
 
             const payload = {
                 title,
-                tags,
+                issuing_organization,
+                issue_date,
+                thumbnail_url,
                 description,
-                content: content || description,
-                repo_url: repoUrl,
-                is_active_build: isActive,
-                progress: isActive ? progressVal : 100
+                skills,
+                certificate_url,
+                linkedin_url,
+                display_order,
+                is_featured
             };
 
             let result;
-            if (editingProjectId) {
-                result = await window.supabaseClient.from('projects').update(payload).eq('id', editingProjectId);
+            if (editingCertId) {
+                result = await window.supabaseClient.from('certificates').update(payload).eq('id', editingCertId);
             } else {
-                result = await window.supabaseClient.from('projects').insert([payload]);
+                result = await window.supabaseClient.from('certificates').insert([payload]);
             }
 
             if (result.error) {
                 showToast(result.error.message, 'error');
             } else {
-                showToast(editingProjectId ? 'Project updated!' : 'Project created!');
-                projectModal?.classList.remove('show');
-                projectForm.reset();
-                editingProjectId = null;
-                fetchProjects();
+                showToast(editingCertId ? 'Certificate updated!' : 'Certificate created!');
+                certModal?.classList.remove('show');
+                certForm.reset();
+                editingCertId = null;
+                fetchCertificatesAdmin();
+                calculateStorage();
             }
         });
     }
 
-    window.editProject = async function (id) {
-        const { data: p, error } = await window.supabaseClient.from('projects').select('*').eq('id', id).single();
-        if (error || !p) return showToast('Error loading project details', 'error');
+    window.openEditCert = async function (id) {
+        const { data: c, error } = await window.supabaseClient.from('certificates').select('*').eq('id', id).single();
+        if (error || !c) return showToast('Error loading certificate details', 'error');
 
-        editingProjectId = id;
-        document.getElementById('proj-title').value = p.title || '';
-        document.getElementById('proj-tags').value = (p.tags || []).join(', ');
-        document.getElementById('proj-desc').value = p.description || '';
-        document.getElementById('proj-content').value = p.content || '';
-        document.getElementById('proj-repo').value = p.repo_url || '';
+        editingCertId = id;
+        document.getElementById('cert-title').value = c.title || '';
+        document.getElementById('cert-org').value = c.issuing_organization || '';
+        document.getElementById('cert-date').value = c.issue_date || '';
+        document.getElementById('cert-thumbnail').value = c.thumbnail_url || '';
+        document.getElementById('cert-desc').value = c.description || '';
+        document.getElementById('cert-skills').value = (c.skills || []).join(', ');
+        document.getElementById('cert-url').value = c.certificate_url || '';
+        document.getElementById('cert-linkedin').value = c.linkedin_url || '';
+        document.getElementById('cert-order').value = c.display_order || 1;
+        document.getElementById('cert-featured').checked = c.is_featured || false;
 
-        const isActive = p.is_active_build || false;
-        document.getElementById('proj-is-active').checked = isActive;
-        document.getElementById('proj-progress').value = p.progress || 75;
-        document.getElementById('progress-input-group').style.display = isActive ? 'flex' : 'none';
-
-        const modalTitle = projectModal.querySelector('h3');
-        if (modalTitle) modalTitle.textContent = 'Edit Project';
-
+        document.getElementById('cert-modal-title').textContent = 'Edit Certificate';
         populateMediaDropdowns();
-        projectModal?.classList.add('show');
+        certModal?.classList.add('show');
     };
 
-    window.deleteProject = function (id) {
-        window.openDeleteModal("Are you sure you want to delete this project?", async () => {
-            const { error } = await window.supabaseClient.from('projects').delete().eq('id', id);
+    window.deleteCert = function (id) {
+        window.openDeleteModal("Are you sure you want to delete this certificate credential?", async () => {
+            const { error } = await window.supabaseClient.from('certificates').delete().eq('id', id);
             if (error) showToast(error.message, 'error');
-            else { showToast('Project deleted'); fetchProjects(); }
+            else { showToast('Certificate deleted!'); fetchCertificatesAdmin(); calculateStorage(); }
         });
     };
 
-    // 8. BLOG MODAL, EDIT & FORM SUBMIT
-    const blogModal = document.getElementById('blog-modal');
-    const openBlogBtn = document.getElementById('open-blog-modal-btn');
-    const closeBlogBtn = document.getElementById('close-blog-modal');
-    const blogForm = document.getElementById('blog-form');
-
-    if (openBlogBtn) {
-        openBlogBtn.addEventListener('click', () => {
-            editingBlogId = null;
-            if (blogForm) blogForm.reset();
-            const modalTitle = blogModal.querySelector('h3');
-            if (modalTitle) modalTitle.textContent = 'Add New Blog Post';
-            populateMediaDropdowns();
-            blogModal?.classList.add('show');
-        });
-    }
-    if (closeBlogBtn) closeBlogBtn.addEventListener('click', () => blogModal?.classList.remove('show'));
-
-    if (blogForm) {
-        blogForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('blog-title').value.trim();
-            const category = document.getElementById('blog-category').value.trim();
-            const excerpt = document.getElementById('blog-excerpt').value.trim();
-            const content = document.getElementById('blog-content').value.trim();
-            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-
-            const payload = { title, slug, category, excerpt, content };
-
-            let result;
-            if (editingBlogId) {
-                result = await window.supabaseClient.from('blogs').update(payload).eq('id', editingBlogId);
-            } else {
-                result = await window.supabaseClient.from('blogs').insert([payload]);
-            }
-
-            if (result.error) {
-                showToast(result.error.message, 'error');
-            } else {
-                showToast(editingBlogId ? 'Blog updated!' : 'Blog article published!');
-                blogModal?.classList.remove('show');
-                blogForm.reset();
-                editingBlogId = null;
-                fetchBlogs();
-            }
-        });
-    }
-
-    window.editBlog = async function (id) {
-        const { data: b, error } = await window.supabaseClient.from('blogs').select('*').eq('id', id).single();
-        if (error || !b) return showToast('Error loading blog details', 'error');
-
-        editingBlogId = id;
-        document.getElementById('blog-title').value = b.title || '';
-        document.getElementById('blog-category').value = b.category || '';
-        document.getElementById('blog-excerpt').value = b.excerpt || '';
-        document.getElementById('blog-content').value = b.content || '';
-
-        const modalTitle = blogModal.querySelector('h3');
-        if (modalTitle) modalTitle.textContent = 'Edit Blog Post';
-
-        populateMediaDropdowns();
-        blogModal?.classList.add('show');
-    };
-
-    window.deleteBlog = function (id) {
-        window.openDeleteModal("Are you sure you want to delete this blog article?", async () => {
-            const { error } = await window.supabaseClient.from('blogs').delete().eq('id', id);
-            if (error) showToast(error.message, 'error');
-            else { showToast('Blog deleted'); fetchBlogs(); }
-        });
-    };
-
-    // 9. ABOUT CARDS & SKILLS MANAGEMENT
+    // 8. ABOUT CARDS & SKILLS MANAGEMENT
     async function fetchAboutContent() {
         if (!window.supabaseClient) return;
         fetchAboutCardsAdmin();
+        fetchCertificatesAdmin();
         fetchSkillsAdmin();
     }
 
@@ -516,7 +451,175 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // 10. FETCH DATA TABLES
+    // 9. PROJECT FORM SUBMIT
+    const projectModal = document.getElementById('project-modal');
+    const openProjBtn = document.getElementById('open-project-modal-btn');
+    const closeProjBtn = document.getElementById('close-project-modal');
+    const projectForm = document.getElementById('project-form');
+
+    if (openProjBtn) {
+        openProjBtn.addEventListener('click', () => {
+            editingProjectId = null;
+            if (projectForm) projectForm.reset();
+            const modalTitle = projectModal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = 'Add New Project';
+            document.getElementById('progress-input-group').style.display = 'none';
+            populateMediaDropdowns();
+            projectModal?.classList.add('show');
+        });
+    }
+    if (closeProjBtn) closeProjBtn.addEventListener('click', () => projectModal?.classList.remove('show'));
+
+    document.getElementById('proj-is-active')?.addEventListener('change', (e) => {
+        const progressGroup = document.getElementById('progress-input-group');
+        if (progressGroup) progressGroup.style.display = e.target.checked ? 'flex' : 'none';
+    });
+
+    if (projectForm) {
+        projectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('proj-title').value.trim();
+            const tags = document.getElementById('proj-tags').value.split(',').map(t => t.trim());
+            const description = document.getElementById('proj-desc').value.trim();
+            const content = document.getElementById('proj-content').value.trim();
+            const repoUrl = document.getElementById('proj-repo').value.trim();
+            const isActive = document.getElementById('proj-is-active')?.checked || false;
+            const progressVal = parseInt(document.getElementById('proj-progress')?.value) || 100;
+
+            const payload = {
+                title,
+                tags,
+                description,
+                content: content || description,
+                repo_url: repoUrl,
+                is_active_build: isActive,
+                progress: isActive ? progressVal : 100
+            };
+
+            let result;
+            if (editingProjectId) {
+                result = await window.supabaseClient.from('projects').update(payload).eq('id', editingProjectId);
+            } else {
+                result = await window.supabaseClient.from('projects').insert([payload]);
+            }
+
+            if (result.error) {
+                showToast(result.error.message, 'error');
+            } else {
+                showToast(editingProjectId ? 'Project updated!' : 'Project created!');
+                projectModal?.classList.remove('show');
+                projectForm.reset();
+                editingProjectId = null;
+                fetchProjects();
+            }
+        });
+    }
+
+    window.editProject = async function (id) {
+        const { data: p, error } = await window.supabaseClient.from('projects').select('*').eq('id', id).single();
+        if (error || !p) return showToast('Error loading project details', 'error');
+
+        editingProjectId = id;
+        document.getElementById('proj-title').value = p.title || '';
+        document.getElementById('proj-tags').value = (p.tags || []).join(', ');
+        document.getElementById('proj-desc').value = p.description || '';
+        document.getElementById('proj-content').value = p.content || '';
+        document.getElementById('proj-repo').value = p.repo_url || '';
+
+        const isActive = p.is_active_build || false;
+        document.getElementById('proj-is-active').checked = isActive;
+        document.getElementById('proj-progress').value = p.progress || 75;
+        document.getElementById('progress-input-group').style.display = isActive ? 'flex' : 'none';
+
+        const modalTitle = projectModal.querySelector('h3');
+        if (modalTitle) modalTitle.textContent = 'Edit Project';
+
+        populateMediaDropdowns();
+        projectModal?.classList.add('show');
+    };
+
+    window.deleteProject = function (id) {
+        window.openDeleteModal("Are you sure you want to delete this project?", async () => {
+            const { error } = await window.supabaseClient.from('projects').delete().eq('id', id);
+            if (error) showToast(error.message, 'error');
+            else { showToast('Project deleted'); fetchProjects(); }
+        });
+    };
+
+    // 10. BLOG FORM SUBMIT
+    const blogModal = document.getElementById('blog-modal');
+    const openBlogBtn = document.getElementById('open-blog-modal-btn');
+    const closeBlogBtn = document.getElementById('close-blog-modal');
+    const blogForm = document.getElementById('blog-form');
+
+    if (openBlogBtn) {
+        openBlogBtn.addEventListener('click', () => {
+            editingBlogId = null;
+            if (blogForm) blogForm.reset();
+            const modalTitle = blogModal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = 'Add New Blog Post';
+            populateMediaDropdowns();
+            blogModal?.classList.add('show');
+        });
+    }
+    if (closeBlogBtn) closeBlogBtn.addEventListener('click', () => blogModal?.classList.remove('show'));
+
+    if (blogForm) {
+        blogForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('blog-title').value.trim();
+            const category = document.getElementById('blog-category').value.trim();
+            const excerpt = document.getElementById('blog-excerpt').value.trim();
+            const content = document.getElementById('blog-content').value.trim();
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+            const payload = { title, slug, category, excerpt, content };
+
+            let result;
+            if (editingBlogId) {
+                result = await window.supabaseClient.from('blogs').update(payload).eq('id', editingBlogId);
+            } else {
+                result = await window.supabaseClient.from('blogs').insert([payload]);
+            }
+
+            if (result.error) {
+                showToast(result.error.message, 'error');
+            } else {
+                showToast(editingBlogId ? 'Blog updated!' : 'Blog article published!');
+                blogModal?.classList.remove('show');
+                blogForm.reset();
+                editingBlogId = null;
+                fetchBlogs();
+            }
+        });
+    }
+
+    window.editBlog = async function (id) {
+        const { data: b, error } = await window.supabaseClient.from('blogs').select('*').eq('id', id).single();
+        if (error || !b) return showToast('Error loading blog details', 'error');
+
+        editingBlogId = id;
+        document.getElementById('blog-title').value = b.title || '';
+        document.getElementById('blog-category').value = b.category || '';
+        document.getElementById('blog-excerpt').value = b.excerpt || '';
+        document.getElementById('blog-content').value = b.content || '';
+
+        const modalTitle = blogModal.querySelector('h3');
+        if (modalTitle) modalTitle.textContent = 'Edit Blog Post';
+
+        populateMediaDropdowns();
+        blogModal?.classList.add('show');
+    };
+
+    window.deleteBlog = function (id) {
+        window.openDeleteModal("Are you sure you want to delete this blog article?", async () => {
+            const { error } = await window.supabaseClient.from('blogs').delete().eq('id', id);
+            if (error) showToast(error.message, 'error');
+            else { showToast('Blog deleted'); fetchBlogs(); }
+        });
+    };
+
+    // 11. FETCH DATA TABLES
     async function fetchProjects() {
         if (!window.supabaseClient) return;
         const { data, error } = await window.supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
@@ -572,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 11. MEDIA LIBRARY
+    // 12. MEDIA LIBRARY
     const mediaFileInput = document.getElementById('media-file-input');
     const mediaNameInput = document.getElementById('media-name-input');
     const uploadBtn = document.getElementById('upload-media-btn');
@@ -687,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // 12. RESTORE BACKUP
+    // 13. RESTORE BACKUP
     document.getElementById('import-json-btn')?.addEventListener('click', () => {
         const file = document.getElementById('import-json-file')?.files[0];
         if (!file) return showToast('Please select a JSON backup file', 'error');
@@ -702,9 +805,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (backup.blogs?.length) {
                     await window.supabaseClient.from('blogs').upsert(backup.blogs);
                 }
+                if (backup.certificates?.length) {
+                    await window.supabaseClient.from('certificates').upsert(backup.certificates);
+                }
                 showToast('Database successfully restored!');
                 fetchProjects();
                 fetchBlogs();
+                fetchCertificatesAdmin();
             } catch (err) {
                 showToast('Invalid backup file format', 'error');
             }

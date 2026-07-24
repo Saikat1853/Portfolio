@@ -56,6 +56,14 @@
                 <p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">Loading cards...</p>
             </div>
 
+            <!-- Certificates & Professional Credentials Section -->
+            <section class="certificates-section" style="padding: 0; margin-bottom: 3rem;">
+                <h3 style="text-align: center; font-size: 1.4rem; margin-bottom: 1.5rem;">Certificates & Professional Credentials</h3>
+                <div class="certificates-grid" id="certificates-grid">
+                    <p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">Loading certificates...</p>
+                </div>
+            </section>
+
             <!-- Technical Proficiency Grid -->
             <h3 style="text-align: center; font-size: 1.4rem; margin-bottom: 1.5rem;">Technical Proficiency</h3>
             <div class="skills-grid"
@@ -111,7 +119,38 @@
                 cardsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">No cards added yet.</p>';
             }
 
-            // 2. Fetch Dynamic Technical Skills
+            // 2. Fetch Dynamic Certificates
+            const { data: certs } = await window.supabaseClient.from('certificates').select('*').order('created_at', { ascending: false });
+            const certsGrid = document.getElementById('certificates-grid');
+
+            if (certsGrid && certs && certs.length > 0) {
+                certsGrid.innerHTML = certs.map(c => `
+                    <article class="cert-card">
+                        <div class="cert-img-wrapper">
+                            <img src="${c.thumbnail_url || 'assets/images/cert-placeholder.jpg'}" alt="${c.title}" loading="lazy">
+                        </div>
+                        <div class="cert-content">
+                            <h4 class="cert-title">${c.title}</h4>
+                            <p class="cert-meta">
+                                <span>${c.issuing_organization}</span> &bull; <span>${c.issue_date}</span>
+                            </p>
+                            <p class="cert-description">${c.description || ''}</p>
+                            <div class="cert-skills">
+                                ${(c.skills || []).map(skill => `<span class="tag">${skill}</span>`).join('')}
+                            </div>
+                            <div class="cert-actions">
+                                ${c.certificate_url ? `<a href="${c.certificate_url}" target="_blank" class="btn btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Certificate</a>` : ''}
+                                ${c.linkedin_url ? `<a href="${c.linkedin_url}" target="_blank" class="btn btn-secondary"><i class="fab fa-linkedin"></i> View on LinkedIn</a>` : ''}
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+            } else if (certsGrid) {
+                // Default fallback state if Supabase table is empty or missing
+                certsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">No certificates added yet.</p>';
+            }
+
+            // 3. Fetch Dynamic Technical Skills
             const { data: skills } = await window.supabaseClient.from('skills').select('*').order('created_at', { ascending: true });
             const skillsGrid = document.querySelector('.skills-grid');
 

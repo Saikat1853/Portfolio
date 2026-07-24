@@ -62,6 +62,13 @@
                             <p>Published Blogs</p>
                         </div>
                     </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-award"></i>
+                        <div>
+                            <h4 id="stat-certs-count">0</h4>
+                            <p>Certificates</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="stats-grid" style="margin-top: 1.5rem;">
                     <div class="stat-card">
@@ -74,8 +81,9 @@
                 </div>
             </section>
 
-            <!-- TAB 2: ABOUT PAGE DYNAMIC CARDS & SKILLS MANAGER -->
+            <!-- TAB 2: ABOUT PAGE (CARDS, CERTIFICATES & SKILLS) -->
             <section id="tab-about" class="tab-content">
+                <!-- About Cards -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h3>Manage About Cards (Experiences, Internships, Bio)</h3>
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add custom cards that display on your public <code>about.html</code> page.</p>
@@ -99,6 +107,20 @@
                     <div id="about-cards-admin-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;"></div>
                 </div>
 
+                <!-- CERTIFICATES MODULE -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3>Manage Certificates & Professional Credentials</h3>
+                            <p style="color: var(--text-secondary);">Add, edit, or remove certificates displayed on your portfolio.</p>
+                        </div>
+                        <button class="btn btn-primary" id="open-cert-modal-btn"><i class="fa-solid fa-plus"></i> Add Certificate</button>
+                    </div>
+
+                    <div id="certs-admin-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;"></div>
+                </div>
+
+                <!-- Technical Skills -->
                 <div class="card">
                     <h3>Manage Technical Proficiency</h3>
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add, edit, or delete skills displayed on your About page.</p>
@@ -191,6 +213,79 @@
     </div>
 
     <!-- MODALS -->
+
+    <!-- ADD/EDIT CERTIFICATE MODAL -->
+    <div id="cert-modal" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <button class="close-modal" id="close-cert-modal">&times;</button>
+            <h3 style="margin-bottom: 1.5rem;" id="cert-modal-title">Add Certificate</h3>
+            <form id="cert-form">
+                <input type="hidden" id="cert-id">
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Thumbnail Image</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="url" id="cert-thumbnail" placeholder="Thumbnail Image URL" class="admin-input" style="flex: 1;">
+                        <select id="cert-media-select" class="admin-input" style="flex: 1;">
+                            <option value="">-- Choose from Media --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 2; min-width: 200px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Certificate Title *</label>
+                        <input type="text" id="cert-title" placeholder="e.g. AWS Certified Developer" required class="admin-input" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Issuing Organization *</label>
+                        <input type="text" id="cert-org" placeholder="e.g. Amazon Web Services" required class="admin-input" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Issue Date *</label>
+                        <input type="text" id="cert-date" placeholder="e.g. June 2026" required class="admin-input" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Display Order</label>
+                        <input type="number" id="cert-order" value="1" min="1" class="admin-input" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Short Description (Concise 2 lines)</label>
+                    <textarea id="cert-desc" rows="2" placeholder="Brief summary of skills or domain covered..." class="admin-input" style="width: 100%;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Skills / Tags (Comma separated)</label>
+                    <input type="text" id="cert-skills" placeholder="e.g. Cloud, Python, DevOps" class="admin-input" style="width: 100%;">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">Credential URL</label>
+                        <input type="url" id="cert-url" placeholder="https://verify.credential.com/..." class="admin-input" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.4rem;">LinkedIn URL</label>
+                        <input type="url" id="cert-linkedin" placeholder="https://linkedin.com/in/..." class="admin-input" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem; background: var(--bg-primary); padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--border-color);">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer;">
+                        <input type="checkbox" id="cert-featured"> Mark as Featured Certificate
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;"><i class="fa-solid fa-floppy-disk"></i> Save Certificate</button>
+            </form>
+        </div>
+    </div>
+
     <!-- NEW / EDIT PROJECT MODAL -->
     <div id="project-modal" class="modal">
         <div class="modal-content" style="max-width: 650px;">
